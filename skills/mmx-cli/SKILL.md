@@ -27,7 +27,7 @@ mmx auth login --api-key sk-xxxxx
 mmx auth status
 
 # Or pass per-call
-mmx text chat --api-key sk-xxxxx --message "Hello"
+mmx text chat --model MiniMax-M3.1-Flash --api-key sk-xxxxx --message "Hello"
 ```
 
 Region is auto-detected. Override with `--region global` or `--region cn`.
@@ -53,27 +53,32 @@ Always use these flags in non-interactive (agent/CI) contexts:
 
 ### text chat
 
-Chat completion. Default model: `MiniMax-M3`. Pass `--model MiniMax-M2.7` for the previous-generation default when reproducing older outputs.
+Chat completion. For new text tasks without an explicit model selection, prefer `MiniMax-M3.1-Flash`; `MiniMax-M3` is the alternative. See the [MiniMax model overview](https://platform.minimax.io/docs/guides/models-intro.md). The examples select a model explicitly rather than relying on the installed CLI's default.
+
+Honor an explicitly requested or saved model, including custom or legacy IDs; do not overwrite that selection with these recommendations. Pass `--model MiniMax-M2.7` only when explicitly reproducing older outputs.
 
 ```bash
-mmx text chat --message <text> [flags]
+mmx text chat --model MiniMax-M3.1-Flash --message <text> [flags]
 ```
 
 ```bash
-# Single message (uses MiniMax-M3 by default)
-mmx text chat --message "user:What is MiniMax?" --output json --quiet
+# Single message
+mmx text chat --model MiniMax-M3.1-Flash --message "user:What is MiniMax?" --output json --quiet
 
 # Multi-turn with system prompt
-mmx text chat \
+mmx text chat --model MiniMax-M3.1-Flash \
   --system "You are a coding assistant." \
   --message "user:Write fizzbuzz in Python" \
   --output json
 
-# Pin to the previous-generation model
+# Select the alternative text model
+mmx text chat --model MiniMax-M3 --message "user:Hello" --output json
+
+# Pin to the previous-generation model only when explicitly requested
 mmx text chat --model MiniMax-M2.7 --message "user:Hello" --output json
 
 # From file
-cat conversation.json | mmx text chat --messages-file - --output json
+cat conversation.json | mmx text chat --model MiniMax-M3.1-Flash --messages-file - --output json
 ```
 
 ---
